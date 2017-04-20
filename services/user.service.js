@@ -32,6 +32,7 @@ function authenticate(username, password) {
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                avatar_url: user.avatar_url,
                 token: jwt.sign({ sub: user._id }, config.secret)
             });
         } else {
