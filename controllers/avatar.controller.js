@@ -32,7 +32,7 @@ router.post('/upload', upload, function(req, res, next) {
             res.json({ error_code: 1, err_desc: err });
             return;
         }
-        res.json({ error_code: 0, err_desc: null });
+        res.json({ error_code: 0, err_desc: 'Avatar successfully uploded' });
     });
 });
 
