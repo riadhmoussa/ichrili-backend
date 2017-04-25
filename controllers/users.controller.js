@@ -7,7 +7,7 @@ var userService = require('../services/user.service');
 router.post('/authenticate', authenticate);
 router.post('/register', register);
 router.get('/', getAll);
-router.get('/current', getCurrent);
+router.get('/current/:id', getCurrent);
 router.put('/:_id', update);
 router.delete('/:_id', _delete);
 
@@ -50,7 +50,7 @@ function getAll(req, res) {
 }
 
 function getCurrent(req, res) {
-    userService.getById(req.user.sub)
+    userService.getById(req.params.id)
         .then(function(user) {
             if (user) {
                 res.send(user);
