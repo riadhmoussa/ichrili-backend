@@ -21,8 +21,14 @@ app.use(expressJwt({ secret: config.secret }).unless({
 
 // routes
 app.use('/users', require('./controllers/users.controller'));
+app.use('/categories', require('./controllers/categories.controller'));
+
 app.use('/avatar', require('./controllers/avatar.controller'));
 app.use("/uploads/avatars", express.static(path.join(__dirname, 'uploads/avatars')));
+
+
+app.use('/icon_category', require('./controllers/icon_category.controller'));
+app.use("/uploads/categoriesicons", express.static(path.join(__dirname, 'uploads/icon_category')));
 
 // start server
 var port = process.env.NODE_ENV === 'production' ? 80 : 4000;
