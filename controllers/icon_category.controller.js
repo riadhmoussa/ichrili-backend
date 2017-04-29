@@ -5,14 +5,14 @@ var categoryService = require('../services/categories.service');
 
 var storage = multer.diskStorage({ //multers disk storage settings
     destination: function(req, file, cb) {
-        cb(null, './uploads/iconCategory');
+        cb(null, './uploads/categoryicons');
     },
     filename: function(req, file, cb) {
         var categoryId = req.body.categoryId;
         var path = file.fieldname + '-' + categoryId + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1];
         cb(null, path);
 
-        categoryService.updateCategoryIcon(userId, path)
+        categoryService.updateIcon(categoryId, path)
             .then(function() {
                 res.sendStatus(200);
             })
