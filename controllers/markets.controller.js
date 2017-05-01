@@ -1,11 +1,10 @@
-﻿var config = require('../config');
+var config = require('../config');
 var express = require('express');
 var router = express.Router();
-var userService = require('../services/user.service');
+var marketService = require('../services/market.service');
 
 // routes
-router.post('/authenticate', authenticate);
-router.post('/register', register);
+router.post('/add', addMarket);
 router.get('/', getAll);
 router.get('/current/:id', getCurrent);
 router.put('/:_id', update);
@@ -13,24 +12,9 @@ router.delete('/:_id', _delete);
 
 module.exports = router;
 
-function authenticate(req, res) {
-    userService.authenticate(req.body.username, req.body.password)
-        .then(function(user) {
-            if (user) {
-                // authentication successful
-                res.send(user);
-            } else {
-                // authentication failed
-                res.status(401).send('Username or password is incorrect');
-            }
-        })
-        .catch(function(err) {
-            res.status(400).send(err);
-        });
-}
-
-function register(req, res) {
-    userService.create(req.body)
+function addMarket(req, res) {
+    console.log('req.body : ', req.body);
+    marketService.create(req.body)
         .then(function() {
             res.sendStatus(200);
         })
@@ -40,9 +24,9 @@ function register(req, res) {
 }
 
 function getAll(req, res) {
-    userService.getAll()
-        .then(function(users) {
-            res.send(users);
+    marketService.getAll()
+        .then(function(markets) {
+            res.send(markets);
         })
         .catch(function(err) {
             res.status(400).send(err);
@@ -50,10 +34,10 @@ function getAll(req, res) {
 }
 
 function getCurrent(req, res) {
-    userService.getById(req.params.id)
-        .then(function(user) {
-            if (user) {
-                res.send(user);
+    marketService.getById(req.params.id)
+        .then(function(market) {
+            if (market) {
+                res.send(market);
             } else {
                 res.sendStatus(404);
             }
@@ -64,7 +48,7 @@ function getCurrent(req, res) {
 }
 
 function update(req, res) {
-    userService.update(req.params._id, req.body)
+    marketService.update(req.params._id, req.body)
         .then(function() {
             res.sendStatus(200);
         })
@@ -74,7 +58,7 @@ function update(req, res) {
 }
 
 function _delete(req, res) {
-    userService.delete(req.params._id)
+    marketService.delete(req.params._id)
         .then(function() {
             res.sendStatus(200);
         })

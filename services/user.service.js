@@ -15,6 +15,7 @@ service.getById = getById;
 service.create = create;
 service.update = update;
 service.delete = _delete;
+service.updateAvatar = updateAvatar;
 
 module.exports = service;
 
@@ -31,6 +32,7 @@ function authenticate(username, password) {
                 username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                avatar_url: user.avatar_url,
                 token: jwt.sign({ sub: user._id }, config.secret)
             });
         } else {
@@ -143,6 +145,12 @@ function update(_id, userParam) {
             firstName: userParam.firstName,
             lastName: userParam.lastName,
             username: userParam.username,
+            email: userParam.email,
+            mobile: userParam.mobile,
+            gender: userParam.gender,
+            adress: userParam.adress,
+            city: userParam.city,
+            country: userParam.country
         };
 
         // update password if it was entered
@@ -171,5 +179,15 @@ function _delete(_id) {
             deferred.resolve();
         });
 
+    return deferred.promise;
+}
+
+function updateAvatar(_id, path) {
+    var deferred = Q.defer();
+    db.users.update({ _id: mongo.helper.toObjectID(_id) }, { $set: { avatar_url: path } },
+        function(err, doc) {
+            if (err) deferred.reject(err.name + ': ' + err.message);
+            deferred.resolve();
+        });
     return deferred.promise;
 }
