@@ -79,7 +79,7 @@ function update(_id, marketParam) {
         // fields to update
         var set = {
             market_name: marketParam.market_name,
-            adress: marketParam.adresse,
+            address: marketParam.address,
             city: marketParam.city,
             position: marketParam.position
         };
