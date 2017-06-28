@@ -13,6 +13,8 @@ var logger = require('morgan');
 
 mongoose.connect(config.connectionString);
 
+
+
 var passport = require('passport');
 var expressSession = require('express-session');
 
@@ -32,23 +34,9 @@ app.use(passport.session());
 
 
 app.use(logger('dev'));
-app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-/// use JWT auth to secure the api
-//app.use(expressJwt({ secret: config.secret }).unless({
-//    path: ['/users/authenticate',
-//        '/users/register', '/avatar/upload',
-//        '/category/upload', '/market/upload',
-//        '/auth/facebook', '/login/facebook', '/auth/facebook/callback',
-//        '/auth/twitter', '/login/twitter', '/auth/twitter/callback',
-//        '/auth/google', '/login/google', '/auth/google/callback',
-//        new RegExp('/uploads/avatars.*/', 'i'),
-//        new RegExp('/uploads/categoryicons.*/', 'i'),
-//        new RegExp('/uploads/marketlogos.*/', 'i')
-//   ]
-//}));
+app.use(cors());
 
 // routes
 app.use('/users', require('./controllers/users.controller'));

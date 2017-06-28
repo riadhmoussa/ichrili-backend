@@ -29,7 +29,7 @@ module.exports = function(passport) {
                         // if there is no user found with that facebook id, create them
                         var newUser = new User();
                         // set all of the facebook information in our user model
-                        console.log(profile)
+                        console.log(profile);
                         newUser.id = profile.id;
                         newUser.firstName = profile._json.first_name;
                         newUser.lastName = profile._json.last_name;
