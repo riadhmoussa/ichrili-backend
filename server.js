@@ -6,7 +6,6 @@ var app = express();
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var expressJwt = require('express-jwt');
-var config = require('./config.json');
 var path = require('path');
 var mongoose = require('mongoose');
 var logger = require('morgan');

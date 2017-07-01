@@ -1,12 +1,8 @@
-var config = require('config.json');
+var config = require('../config.json');
 var _ = require('lodash');
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
+var Market = require('../models/schemas/markets');
 var Q = require('q');
-var json2mongo = require('json2mongo');
-var mongo = require('mongoskin');
-var db = mongo.db(config.connectionString, { native_parser: true });
-db.bind('markets');
+var mongoose = require('mongoose');
 
 
 var service = {};
@@ -22,7 +18,7 @@ module.exports = service;
 
 function getAll() {
     var deferred = Q.defer();
-    db.markets.find().toArray(function(err, markets) {
+    Market.find((err, markets) => {
         if (err) deferred.reject(err.name + ': ' + err.message);
         deferred.resolve(markets);
     });
@@ -32,7 +28,7 @@ function getAll() {
 function getById(_id) {
     var deferred = Q.defer();
 
-    db.markets.findById(_id, function(err, markets) {
+    Market.findById(_id, function(err, markets) {
         if (err) deferred.reject(err.name + ': ' + err.message);
     });
     return deferred.promise;
@@ -41,7 +37,7 @@ function getById(_id) {
 function create(marketParam) {
     var deferred = Q.defer()
     var market = marketParam;
-    db.markets.insert(
+    Market.insert(
         market,
         function(err, doc) {
             if (err) deferred.reject(err.name + ': ' + err.message);
@@ -54,12 +50,12 @@ function update(_id, marketParam) {
     var deferred = Q.defer();
 
     // validation
-    db.markets.findById(_id, function(err, market) {
+    Market.findById(_id, function(err, market) {
         if (err) deferred.reject(err.name + ': ' + err.message);
 
         if (market.market_name !== marketParam.market_name) {
             // market has changed so check if the new market_name is already taken
-            db.markets.findOne({ market_name: marketParam.market_name },
+            Market.findOne({ market_name: marketParam.market_name },
                 function(err, market) {
                     if (err) deferred.reject(err.name + ': ' + err.message);
 
@@ -84,7 +80,7 @@ function update(_id, marketParam) {
             position: marketParam.position
         };
 
-        db.markets.update({ _id: mongo.helper.toObjectID(_id) }, { $set: set },
+        Market.update({ _id: mongo.helper.toObjectID(_id) }, { $set: set },
             function(err, doc) {
                 if (err) deferred.reject(err.name + ': ' + err.message);
                 deferred.resolve();
@@ -97,7 +93,7 @@ function update(_id, marketParam) {
 function _delete(_id) {
     var deferred = Q.defer();
 
-    db.markets.remove({ _id: mongo.helper.toObjectID(_id) },
+    Market.remove({ _id: mongo.helper.toObjectID(_id) },
         function(err) {
             if (err) deferred.reject(err.name + ': ' + err.message);
             deferred.resolve();
@@ -108,7 +104,7 @@ function _delete(_id) {
 
 function updateLogo(_id, path) {
     var deferred = Q.defer();
-    db.markets.update({ _id: mongo.helper.toObjectID(_id) }, { $set: { logo_url: path } },
+    Market.update({ _id: mongo.helper.toObjectID(_id) }, { $set: { logo_url: path } },
         function(err, doc) {
             if (err) deferred.reject(err.name + ': ' + err.message);
             deferred.resolve();

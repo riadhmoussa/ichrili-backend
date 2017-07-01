@@ -1,11 +1,9 @@
-var config = require('config.json');
+var config = require('../config.json');
 var _ = require('lodash');
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
+var Categorie = require('../models/schemas/categories');
 var Q = require('q');
-var mongo = require('mongoskin');
-var db = mongo.db(config.connectionString, { native_parser: true });
-db.bind('categories');
+var mongoose = require('mongoose');
+
 
 var service = {};
 service.getAll = getAll;
@@ -21,7 +19,7 @@ module.exports = service;
 function getAll() {
     var deferred = Q.defer();
 
-    db.categories.find().toArray(function(err, categories) {
+    Categorie.find((err, categories) => {
         if (err) deferred.reject(err.name + ': ' + err.message);
         deferred.resolve(categories);
     });
@@ -31,7 +29,7 @@ function getAll() {
 function getById(_id) {
     var deferred = Q.defer();
 
-    db.categories.findById(_id, function(err, categories) {
+    Categorie.findById(_id, function(err, categories) {
         if (err) deferred.reject(err.name + ': ' + err.message);
     });
     return deferred.promise;
@@ -40,7 +38,7 @@ function getById(_id) {
 function create(categoryParam) {
     var deferred = Q.defer();
     // validation
-    db.categories.findOne({ category_label: categoryParam.category_label },
+    Categorie.findOne({ category_label: categoryParam.category_label },
         function(err, category) {
             if (err) deferred.reject(err.name + ': ' + err.message);
 
@@ -54,7 +52,7 @@ function create(categoryParam) {
 
     function createCategory() {
         var category = categoryParam;
-        db.categories.insert(
+        Categorie.insert(
             category,
             function(err, doc) {
                 if (err) deferred.reject(err.name + ': ' + err.message);
@@ -69,12 +67,12 @@ function update(_id, categoryParam) {
     var deferred = Q.defer();
 
     // validation
-    db.categories.findById(_id, function(err, category) {
+    Categorie.findById(_id, function(err, category) {
         if (err) deferred.reject(err.name + ': ' + err.message);
 
         if (category.category_label !== categoryParam.category_label) {
             // category has changed so check if the new category_label is already taken
-            db.categories.findOne({ category_label: categoryParam.category_label },
+            Categorie.findOne({ category_label: categoryParam.category_label },
                 function(err, category) {
                     if (err) deferred.reject(err.name + ': ' + err.message);
 
@@ -97,7 +95,7 @@ function update(_id, categoryParam) {
             store: categoryParam.store
         };
 
-        db.categories.update({ _id: mongo.helper.toObjectID(_id) }, { $set: set },
+        Categorie.update({ _id: mongo.helper.toObjectID(_id) }, { $set: set },
             function(err, doc) {
                 if (err) deferred.reject(err.name + ': ' + err.message);
                 deferred.resolve();
@@ -110,7 +108,7 @@ function update(_id, categoryParam) {
 function _delete(_id) {
     var deferred = Q.defer();
 
-    db.categories.remove({ _id: mongo.helper.toObjectID(_id) },
+    Categorie.remove({ _id: mongo.helper.toObjectID(_id) },
         function(err) {
             if (err) deferred.reject(err.name + ': ' + err.message);
             deferred.resolve();
@@ -121,7 +119,7 @@ function _delete(_id) {
 
 function updateIcon(_id, path) {
     var deferred = Q.defer();
-    db.categories.update({ _id: mongo.helper.toObjectID(_id) }, { $set: { icon_url: path } },
+    Categorie.update({ _id: mongo.helper.toObjectID(_id) }, { $set: { icon_url: path } },
         function(err, doc) {
             if (err) deferred.reject(err.name + ': ' + err.message);
             deferred.resolve();
